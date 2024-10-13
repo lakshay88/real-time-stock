@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package stockService;
+
+option go_package = "/stock-service";
+
+service StockService {
+  rpc StreamStockPriceUpdate (StockRequest) returns (stream  StockUpdate);
+}
+
+message StockRequest {
+  string symbol = 1;
+}
+
+message StockUpdate {
+  string symbol = 1;
+  float price = 2;
+  string timestamp = 3;
+}
