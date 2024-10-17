@@ -1,8 +1,11 @@
 package utils
 
 import (
+	"context"
 	"log"
+	"time"
 
+	clientv3 "go.etcd.io/etcd/client/v3"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -22,4 +25,14 @@ func VerifyPassword(hashedPassword, password string) error {
 		return err
 	}
 	return nil
+}
+
+func RegisterService(etcdClient *clientv3.Client, serviceName, serviceAddr string) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	_, err := etcdClient.Put(ctx, serviceName, serviceAddr)
+	if err != nil {
+		log.Fatalf("Failed to register service: %v", err)
+	}
 }

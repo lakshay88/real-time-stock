@@ -4,18 +4,40 @@ import (
 	"log"
 	"net/http"
 	"sync"
+	"time"
 
 	"github.com/gorilla/mux"
 	"github.com/lakshay88/real-time-stock/auth"
 	"github.com/lakshay88/real-time-stock/config"
 	"github.com/lakshay88/real-time-stock/database"
 	"github.com/lakshay88/real-time-stock/internal/user/handlers"
+	"github.com/lakshay88/real-time-stock/utils"
+	clientv3 "go.etcd.io/etcd/clientv3"
 )
 
 const (
 	restPort = ":8080"
 	grpcPort = ":50051"
 )
+
+func init() {
+
+	// Service Discovery
+	var err error
+	etcdClient, err := clientv3.New(clientv3.Config{
+		Endpoints:   []string{"localhost:2379"}, // etcd endpoint
+		DialTimeout: 5 * time.Second,
+	})
+	if err != nil {
+		log.Fatalf("Failed to connect to etcd: %v", err)
+	}
+	defer etcdClient.Close()
+
+	// Register the service
+	serviceName := "user-service"
+	serviceAddr := "localhost:8080" // Address where the service is running
+	utils.RegisterService(serviceName, serviceAddr)
+}
 
 func main() {
 	// Creating to goroutines to finish
