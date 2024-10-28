@@ -12,7 +12,7 @@ import (
 	"github.com/lakshay88/real-time-stock/database"
 	"github.com/lakshay88/real-time-stock/internal/user/handlers"
 	"github.com/lakshay88/real-time-stock/utils"
-	clientv3 "go.etcd.io/etcd/clientv3"
+	"go.etcd.io/etcd/client/v3"
 )
 
 const (
@@ -36,7 +36,7 @@ func init() {
 	// Register the service
 	serviceName := "user-service"
 	serviceAddr := "localhost:8080" // Address where the service is running
-	utils.RegisterService(serviceName, serviceAddr)
+	utils.RegisterService(etcdClient, serviceName, serviceAddr)
 }
 
 func main() {
